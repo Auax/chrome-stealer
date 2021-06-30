@@ -1,0 +1,13 @@
+      _/_/
+   _/    _/  _/    _/    _/_/_/  _/    _/
+  _/_/_/_/  _/    _/  _/    _/    _/_/
+ _/    _/  _/    _/  _/    _/  _/    _/
+_/    _/    _/_/_/    _/_/_/  _/    _/
+AUAX Chrome Password Retriever - 2021
+
+
+EDUCATIONAL PURPOSES ONLY! DO NOT USE THIS ILLEGALLY.
+-----------------------------------------------------
+WARNING: this code is still in development.
+Need to implement MACOS.
+------------------------------------------------------------
