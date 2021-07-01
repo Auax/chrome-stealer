@@ -9,9 +9,7 @@ The project is still in development at the moment; I need to implement macOS.
 
 
 ### Working browsers in macOS:
- * Chrome
- * Brave
- * Opera
+ * None right now
 
 ---
 # Set your Discord Webhook
