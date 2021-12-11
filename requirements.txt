@@ -1,7 +1,2 @@
-pycryptodomex==3.10.1
-pynput==1.7.3
-numpy==1.20.2
-secretstorage~=3.3.1
+passax==1.0.7
 requests~=2.25.0
-pywin32==301; platform_system == "Windows"
-pycrypto==2.6.1; platform_system == "Linux"

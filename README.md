@@ -3,6 +3,8 @@
 ---
 **EDUCATIONAL PURPOSES ONLY! DO NOT USE THIS ILLEGALLY.**
 
+**This project works under the [passax](https://pypi.org/project/passax/) Python3 library (created by me).**
+
 This Python trojan will **STEAL** all Chrome, Opera and Brave passwords and send them over through a Discord Webhook you can set. 
 
 The project is still in development at the moment; I need to implement macOS.
