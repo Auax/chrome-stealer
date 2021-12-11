@@ -1,16 +1,11 @@
 import logging
 
-# Create custom logger
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
-
-# Create handler
-f_handler = logging.FileHandler("logger.log")
-f_handler.setLevel(logging.ERROR)
-
-# Create formatter and add it to the handler
-f_format = logging.Formatter('%(asctime)s - %(filename)s:%(lineno)s:%(funcName)s() - %(levelname)s: %(message)s')
-f_handler.setFormatter(f_format)
-
-# Add handler to the logger
-logger.addHandler(f_handler)
+# Setup
+# Need to import this to the main file
+# Add logging.StreamHandler() to print to console
+handlers = [logging.FileHandler('app.log')]
+logging.basicConfig(
+    format="%(asctime)s - %(levelname)s : %(message)s",
+    level=logging.INFO,
+    datefmt='%d-%b-%y %H:%M:%S',
+    handlers=handlers)

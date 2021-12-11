@@ -1,4 +1,5 @@
 import getpass
+import logging
 import os
 import shutil
 import sqlite3
@@ -10,7 +11,6 @@ from typing import Union, Any
 from Crypto.Cipher import AES
 
 from exceptions import Exit
-from logger import logger
 
 if os.name == "nt":
     import win32crypt
@@ -68,7 +68,7 @@ class ChromeBase:
 
             except:
                 # Not handled error. Abort execution
-                logger.error(f"Code {Exit.NOT_HANDLED}")
+                logging.error(f"Code {Exit.NOT_HANDLED}")
                 raise Exit(Exit.NOT_HANDLED)
 
     @staticmethod
@@ -83,7 +83,7 @@ class ChromeBase:
             return cipher.decrypt(password).strip().decode('utf8')
 
         except Exception as E:
-            logger.error(f"Code {Exit.NOT_HANDLED} Error: {E}")
+            logging.error(f"Code {Exit.NOT_HANDLED} Error: {E}")
             raise Exit(Exit.NOT_HANDLED)  # Not handled error. Abort execution
 
     def retrieve_database(self) -> list:
@@ -172,38 +172,44 @@ class ChromeBase:
                     os.remove(filename)
 
                 except OSError:  # Skip if the database can't be deleted.
-                    logger.warning("Couldn't delete temp database")
+                    logging.warning("Couldn't delete temp database")
 
                 return self.values
 
         # Errors
         except Exception as E:
             if E == 'database is locked':
-                logger.error('Make sure Google Chrome is not running in the background')
+                logging.error('Make sure Google Chrome is not running in the background')
                 raise Exit(Exit.DATABASE_IS_LOCKED)
 
             elif E == 'no such table: logins':
-                logger.error('Something wrong with the database name')
+                logging.error('Something wrong with the database name')
                 raise Exit(Exit.DATABASE_UNDEFINED_TABLE)
 
             elif E == 'unable to open database file':
-                logger.error('Something wrong with the database path')
+                logging.error('Something wrong with the database path')
                 raise Exit(Exit.DATABASE_NOT_FOUND)
 
             else:
                 # Not handled error. Abort execution.
-                logger.error(f"Code {Exit.DATABASE_ERROR} Error: {E}")
+                logging.error(f"Code {Exit.DATABASE_ERROR} Error: {E}")
                 raise Exit(Exit.DATABASE_ERROR)
+
+    def pretty_print(self) -> str:
+        """
+        Return the pretty-printed values
+        """
+        o = ""
+        for dict_ in self.values:
+            for val in dict_:
+                o += f"{val} : {dict_[val]}\n"
+            o += '-' * 50 + '\n'
+        return o
 
     def save(self, filename: Union[Path, str]) -> None:
         """Save all the values to a desired path
         :param filename: the filename (including the path to dst)
         :return: None
         """
-
         with open(filename, 'w') as file:
-            for dict_ in self.values:
-                for val in dict_:
-                    file.write(f"{val} : {dict_[val]}\n")
-                file.write('-' * 50 + '\n')
-            file.close()
+            file.write(self.pretty_print())
