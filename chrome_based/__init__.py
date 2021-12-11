@@ -1,7 +1,5 @@
-import platform
+from chrome_based.linux import ChromeLinux
+from chrome_based.windows import ChromeWindows
+import logger  # Setup logger
 
-if platform.system() == "Windows":
-    from chrome_based import windows
-
-elif platform.system() == "Linux":
-    from chrome_based import linux
+handled_browsers = ["chrome", "opera", "brave"]

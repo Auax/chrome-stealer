@@ -1,3 +1,4 @@
+import logging
 import base64
 import getpass
 import json
@@ -9,7 +10,6 @@ import win32crypt
 
 from chrome_based.base import ChromeBase
 from exceptions import Exit
-from logger import logger
 
 
 class ChromeWindows(ChromeBase):
@@ -49,6 +49,7 @@ class ChromeWindows(ChromeBase):
     def get_windows(self):
         """Return database paths and keys for Windows
         """
+
         if self.browser == "chrome":
             chrome_versions = ['chrome', 'chrome dev', 'chrome beta', 'chrome canary']
 
@@ -91,7 +92,7 @@ class ChromeWindows(ChromeBase):
                 local_state = json.loads(local_state)
 
         except FileNotFoundError:
-            logger.error(f"Code {Exit.FILE_NOT_FOUND}")
+            logging.error(f"Code {Exit.FILE_NOT_FOUND}")
             raise Exit(Exit.FILE_NOT_FOUND)
 
         key = base64.b64decode(local_state["os_crypt"]["encrypted_key"])

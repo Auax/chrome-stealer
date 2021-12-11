@@ -1,3 +1,4 @@
+import logging
 import os
 
 import secretstorage
@@ -5,7 +6,6 @@ from Crypto.Protocol import KDF
 
 from chrome_based.base import ChromeBase
 from exceptions import Exit
-from logger import logger
 
 
 class ChromeLinux(ChromeBase):
@@ -34,7 +34,7 @@ class ChromeLinux(ChromeBase):
         }
 
         if not os.path.isdir(self.browsers_paths[self.browser]):
-            logger.error(f"Code {Exit.BROWSER_NOT_FOUND}")
+            logging.error(f"Code {Exit.BROWSER_NOT_FOUND}")
             raise Exit(Exit.BROWSER_NOT_FOUND)
 
         self.browsers_database_paths = {

