@@ -18,6 +18,7 @@ Install the requirements with
 Or install them manually:
 * passax==1.20
 * requests~=2.25.0
+* discord-webhook==0.14.0
 
 ### Working browsers:
 
