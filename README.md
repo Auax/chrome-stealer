@@ -11,6 +11,14 @@
 This Python trojan will **retrieve all Chrome, Opera and Brave passwords** and send them over through a Discord Webhook you
 can set.
 
+### Requirements:
+Install the requirements with
+`python3 -m pip install -r requirements.txt`
+
+Or install them manually:
+* passax==1.20
+* requests~=2.25.0
+
 ### Working browsers:
 
 * Chrome
