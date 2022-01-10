@@ -1,3 +1,6 @@
+
+# Do not use this branch! It is deprecated and it uses an old Passax version.
+
 # C-Auax
 ### For Chrome-based browsers 
 ---
